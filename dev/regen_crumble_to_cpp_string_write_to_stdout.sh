@@ -17,10 +17,14 @@ cd "$(git rev-parse --show-toplevel)"
         echo "</script>";
     } | python -c '
 import sys
+import html
+print(f"""    result.append(R"CRUMBLE_PART(<iframe width=100% height=400 srcdoc=\")CRUMBLE_PART");""");
 for line in sys.stdin:
     for k in range(0, len(line), 1024):
-        part = line[k:k+1024]
-        print(f"""    result.append(R"CRUMBLE_PART({part})CRUMBLE_PART");""")';
+        part = html.escape(line[k:k+1024])
+        print(f"""    result.append(R"CRUMBLE_PART({part})CRUMBLE_PART");""")
+print(f"""    result.append(R"CRUMBLE_PART(\"></iframe>)CRUMBLE_PART");""");
+	';
     echo '    return result;'
     echo '}';
 }
